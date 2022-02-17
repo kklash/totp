@@ -4,8 +4,10 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/hex"
+	"fmt"
 	"hash"
 	"testing"
+	"time"
 
 	"github.com/kklash/totp"
 )
@@ -275,4 +277,25 @@ func TestGenerateTOTP(t *testing.T) {
 			t.Errorf("failed to generate otp with counter 0x%x\nWanted %s\nGot    %s", fixture.counter, fixture.otp, generated)
 		}
 	}
+}
+
+func ExampleGenerateHOTP() {
+	secret := []byte("12345678901234567890")
+	var counter uint64 = 1
+	otp1 := totp.GenerateHOTP(nil, secret, counter)
+	fmt.Println(otp1)
+
+	// output:
+	// 287082
+}
+
+func ExampleGenerateTOTP() {
+	secret := []byte("12345678901234567890")
+	now := time.Unix(1111111111, 0)
+
+	otp2 := totp.GenerateTOTP(nil, secret, now)
+	fmt.Println(otp2)
+
+	// output:
+	// 050471
 }
