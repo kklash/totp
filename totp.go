@@ -4,28 +4,22 @@ package totp
 import (
 	"crypto/hmac"
 	"crypto/sha1"
+	"encoding/binary"
 	"fmt"
 	"hash"
 	"time"
 )
 
 // Encodes a uint64 as a big-endian byte slice.
-// Manual binary encoding is much faster than using the encoding/binary package.
 func encodeUint64(n uint64) []byte {
 	buf := make([]byte, 8)
-	for i := 0; i < 8; i++ {
-		buf[i] = byte((n >> (56 - (i * 8))) & 0xff)
-	}
+	binary.BigEndian.PutUint64(buf, n)
 	return buf
 }
 
 // Decodes a big-endian uint32 from a byte slice.
-// Manual binary decoding is much faster than using the encoding/binary package.
-func decodeUint32(buf []byte) (n uint32) {
-	for i := 0; i < 4; i++ {
-		n += uint32(buf[i]) << ((3 - i) * 8)
-	}
-	return
+func decodeUint32(buf []byte) uint32 {
+	return binary.BigEndian.Uint32(buf)
 }
 
 // Converts an integer to a one-time-password padded to 6 digits.
